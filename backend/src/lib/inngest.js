@@ -7,23 +7,23 @@ export const inngest = new Inngest({ id: "talent-iq" });
 
 const syncUser = inngest.createFunction(
   { id: "sync-user" },
-  { event: "clerk/user.created" },
+  { event: "user/created" },
   async ({ event }) => {
     await connectDB();
 
-    const { id, email_addresses, first_name, last_name, image_url } = event.data;
+    const { id, email, name, profileImage } = event.data;
 
     const newUser = {
-      clerkId: id,
-      email: email_addresses[0]?.email_address,
-      name: `${first_name || ""} ${last_name || ""}`,
-      profileImage: image_url,
+      googleId: id,
+      email: email,
+      name: name,
+      profileImage: profileImage,
     };
 
     await User.create(newUser);
 
     await upsertStreamUser({
-      id: newUser.clerkId.toString(),
+      id: newUser.googleId.toString(),
       name: newUser.name,
       image: newUser.profileImage,
     });
@@ -32,12 +32,12 @@ const syncUser = inngest.createFunction(
 
 const deleteUserFromDB = inngest.createFunction(
   { id: "delete-user-from-db" },
-  { event: "clerk/user.deleted" },
+  { event: "user/deleted" },
   async ({ event }) => {
     await connectDB();
 
     const { id } = event.data;
-    await User.deleteOne({ clerkId: id });
+    await User.deleteOne({ googleId: id });
 
     await deleteStreamUser(id.toString());
   }

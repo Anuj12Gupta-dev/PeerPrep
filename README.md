@@ -1,37 +1,14 @@
-# PrepMate AI - Coding Interview Preparation Platform
+# Talent IQ - Real-Time Collaborative Coding Platform
 
-PrepMate AI is a collaborative coding interview preparation platform that allows users to practice coding problems together in real-time with video chat, code sharing, and execution capabilities.
+Talent IQ is a real-time collaborative coding platform designed to help developers prepare for technical interviews through peer programming sessions. Built with modern web technologies, it enables users to solve coding problems together with video chat, code sharing, and real-time collaboration features.
 
-## Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Technology Stack](#technology-stack)
-- [Architecture](#architecture)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Environment Variables](#environment-variables)
-  - [Running the Application](#running-the-application)
-- [Usage Guide](#usage-guide)
-- [API Endpoints](#api-endpoints)
-- [Contributing](#contributing)
-- [License](#license)
+## 🌟 Key Features
 
-## Overview
-
-PrepMate AI is designed to help software engineers prepare for technical interviews by providing a collaborative environment where they can practice coding problems with peers. The platform combines real-time video chat, shared code editing, and instant code execution to simulate a realistic interview setting.
-
-## Features
-
-### Core Features
-- **Real-time Video Chat**: Connect with peers for face-to-face interview practice
-- **Collaborative Code Editor**: Write and edit code together in real-time with syntax highlighting
-- **Multi-language Support**: Practice in various programming languages (JavaScript, Python, Java, etc.)
-- **Instant Code Execution**: Run your code and see results instantly without leaving the platform
-- **Coding Problem Library**: Access a curated collection of common interview problems
-- **Session Management**: Create, join, and manage practice sessions
-- **User Authentication**: Secure sign-up and login using Clerk authentication
+### Core Functionality
+- **Real-Time Code Collaboration**: Work together on coding problems using a shared Monaco editor
+- **Video & Audio Communication**: Connect face-to-face with built-in video and voice calling
+- **Interactive Problem Solving**: Access a curated collection of coding interview problems
+- **Session Management**: Create, join, and manage coding sessions with other developers
 
 ### Additional Features
 - **Problem Difficulty Levels**: Problems categorized by difficulty (Easy, Medium, Hard)
@@ -50,7 +27,7 @@ PrepMate AI is designed to help software engineers prepare for technical intervi
 - **React Query (TanStack Query)** - Data fetching and state management
 - **Monaco Editor** - Code editor component (same as VS Code)
 - **Stream Chat & Video SDK** - Real-time communication APIs
-- **Clerk** - Authentication and user management
+- **Google OAuth** - Authentication and user management
 
 ### Backend
 - **Node.js** - JavaScript runtime environment
@@ -58,71 +35,58 @@ PrepMate AI is designed to help software engineers prepare for technical intervi
 - **MongoDB with Mongoose** - NoSQL database and ODM
 - **Inngest** - Event-driven background job processing
 - **Stream Chat & Video API** - Real-time communication infrastructure
-- **Clerk Express Middleware** - Authentication middleware
-
-## Architecture
+- **Google OAuth & JWT** - Authentication middleware
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Frontend      │    │    Backend       │    │   Services      │
-│   (React)       │    │   (Node/Express) │    │                 │
-├─────────────────┤    ├──────────────────┤    ├─────────────────┤
-│                 │    │                  │    │                 │
-│  React Router   │    │   Controllers    │    │   MongoDB       │
-│  React Query    │◄──►│   Middleware     │◄──►│   (Sessions)    │
-│  Monaco Editor  │    │   Routes         │    │                 │
-│  Stream SDK     │    │   Models         │    │   Stream API    │
-│  Clerk Auth     │    │   Lib (Utils)    │    │   (Chat/Video)  │
-│                 │    │                  │    │                 │
+│   React App     │    │   Express.js     │    │   MongoDB       │
+│  React Router   │◄──►│   Controllers    │◄──►│   (Sessions)    │
+│  React Query    │    │   Middleware     │    │                 │
+│  Monaco Editor  │    │   Routes         │    │   Stream API    │
+│  Stream SDK     │    │   Models         │    │   (Chat/Video)  │
+│  Google OAuth   │    │   Lib (Utils)    │    │                 │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
-## Project Structure
-
-```
-prepmate-ai/
-├── backend/
-│   ├── src/
-│   │   ├── controllers/     # Request handlers
-│   │   ├── lib/             # Utilities and configurations
-│   │   ├── middleware/      # Custom middleware functions
-│   │   ├── models/          # Database models
-│   │   ├── routes/          # API route definitions
-│   │   └── server.js        # Main server entry point
-│   ├── .env                 # Backend environment variables
-│   └── package.json         # Backend dependencies
-└── frontend/
-    ├── src/
-    │   ├── api/             # API service functions
-    │   ├── components/      # Reusable UI components
-    │   ├── data/            # Static data files
-    │   ├── hooks/           # Custom React hooks
-    │   ├── lib/             # Utility functions
-    │   ├── pages/           # Page components
-    │   ├── App.jsx          # Main App component
-    │   └── main.jsx         # React DOM renderer
-    ├── .env                 # Frontend environment variables
-    └── package.json         # Frontend dependencies
-```
-
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
-
-Before you begin, ensure you have the following installed:
 - Node.js (v16 or higher)
-- npm or yarn package manager
-- MongoDB database (local or cloud instance)
-- Accounts for third-party services:
-  - Clerk (Authentication)
-  - Stream Chat & Video (Communication APIs)
+- MongoDB Atlas account or local MongoDB instance
+- Stream Chat & Video API keys
+- Google OAuth Client ID
+- Inngest account (optional for production)
+
+### Environment Variables
+
+#### Backend (.env)
+```env
+PORT=5000
+NODE_ENV=development
+CLIENT_URL=http://localhost:5173
+DB_URL=your_mongodb_connection_string
+STREAM_API_KEY=your_stream_api_key
+STREAM_API_SECRET=your_stream_api_secret
+INNGEST_EVENT_KEY=your_inngest_event_key
+INNGEST_SIGNING_KEY=your_inngest_signing_key
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+JWT_SECRET=your_jwt_secret_key
+```
+
+#### Frontend (.env)
+```env
+VITE_API_URL=http://localhost:5000/api
+VITE_STREAM_API_KEY=your_stream_api_key
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
+```
 
 ### Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/prepmate-ai.git
-cd prepmate-ai
+git clone https://github.com/yourusername/talent-iq.git
+cd talent-iq
 ```
 
 2. Install backend dependencies:
@@ -137,106 +101,77 @@ cd ../frontend
 npm install
 ```
 
-### Environment Variables
+4. Set up environment variables in both `backend/.env` and `frontend/.env`
 
-#### Backend (.env)
-Create a `.env` file in the `backend/` directory with the following variables:
-```env
-PORT=5000
-NODE_ENV=development
-CLIENT_URL=http://localhost:5173
-MONGO_URI=your_mongodb_connection_string
-CLERK_SECRET_KEY=your_clerk_secret_key
-STREAM_API_KEY=your_stream_api_key
-STREAM_API_SECRET=your_stream_api_secret
-INNGEST_SIGNING_KEY=your_inngest_signing_key
-INNGEST_EVENT_KEY=your_inngest_event_key
-```
+5. Start the development servers:
 
-#### Frontend (.env)
-Create a `.env` file in the `frontend/` directory with the following variables:
-```env
-VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-VITE_STREAM_API_KEY=your_stream_api_key
-VITE_BACKEND_URL=http://localhost:5000
-```
-
-### Running the Application
-
-1. Start the backend server:
+Backend:
 ```bash
 cd backend
 npm run dev
 ```
 
-2. Start the frontend development server:
+Frontend:
 ```bash
 cd frontend
 npm run dev
 ```
 
-3. Open your browser and navigate to `http://localhost:5173`
+The application will be available at:
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:5000
 
-## Usage Guide
+## 📁 Project Structure
 
-### Creating an Account
-1. Visit the homepage and click "Sign Up"
-2. Complete the registration process using email or social login
-3. Verify your email if required
+```
+talent-iq/
+├── backend/
+│   ├── src/
+│   │   ├── controllers/     # Request handlers
+│   │   ├── lib/            # Utility functions
+│   │   ├── middleware/     # Custom middleware
+│   │   ├── models/         # Database models
+│   │   ├── routes/         # API routes
+│   │   └── server.js       # Entry point
+│   ├── .env                # Environment variables
+│   └── package.json        # Backend dependencies
+└── frontend/
+    ├── src/
+    │   ├── api/            # API clients
+    │   ├── components/     # Reusable UI components
+    │   ├── contexts/       # React context providers
+    │   ├── data/           # Static data
+    │   ├── hooks/          # Custom React hooks
+    │   ├── lib/            # Utility functions
+    │   ├── pages/          # Page components
+    │   ├── App.jsx         # Main app component
+    │   └── main.jsx        # Entry point
+    ├── .env                # Environment variables
+    └── package.json        # Frontend dependencies
+```
 
-### Starting a Practice Session
-1. After logging in, you'll be redirected to the dashboard
-2. Click "Create Session" to start a new practice session
-3. Select a coding problem and difficulty level
-4. Share the session link with a peer or wait for someone to join
+## 🔐 Authentication
 
-### Joining a Session
-1. From the dashboard, browse active sessions
-2. Click "Join" on any available session
-3. You'll be redirected to the session page
+Talent IQ uses Google OAuth for authentication with JWT tokens stored in secure HTTP-only cookies. The authentication flow works as follows:
 
-### Using the Collaborative Editor
-1. The left panel displays the problem description and examples
-2. The middle panel contains the code editor:
-   - Select your preferred programming language
-   - Write and edit code collaboratively
-   - Click "Run Code" to execute your solution
-3. The bottom panel shows the output of your code execution
+1. User clicks "Sign in with Google" on the login page
+2. Google OAuth popup appears for user authentication
+3. Upon successful authentication, Google returns an ID token
+4. Frontend sends the token to the backend `/api/auth/google` endpoint
+5. Backend verifies the token with Google and creates/stores user data
+6. Backend generates a JWT token and sets it in an HTTP-only cookie
+7. Subsequent requests include the cookie for authentication
+8. Backend middleware verifies the JWT and attaches user data to requests
 
-### Video Chat
-1. The right panel displays the video chat interface
-2. Camera and microphone permissions will be requested
-3. Built-in chat functionality for text communication
+## 🤝 Contributing
 
-## API Endpoints
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-### Session Management
-- `POST /api/sessions` - Create a new session
-- `GET /api/sessions/active` - Get all active sessions
-- `GET /api/sessions/my-recent` - Get user's recent sessions
-- `GET /api/sessions/:id` - Get session by ID
-- `POST /api/sessions/:id/join` - Join a session
-- `POST /api/sessions/:id/end` - End a session
+## 📄 License
 
-### Health Check
-- `GET /test` - Check if the API is running
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Contributing
+## 🙏 Acknowledgments
 
-We welcome contributions to PrepMate AI! Here's how you can help:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-Please ensure your code follows the existing style and includes appropriate tests.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-*PrepMate AI - Practice makes perfect, especially with the right partner!*
+- Thanks to all the open-source libraries and tools that made this project possible
+- Special thanks to the developer community for continuous inspiration

@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   ArrowRightIcon,
   CheckIcon,
@@ -8,9 +8,14 @@ import {
   VideoIcon,
   ZapIcon,
 } from "lucide-react";
-import { SignInButton } from "@clerk/clerk-react";
 
 function HomePage() {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate("/login");
+  };
+
   return (
     <div className="bg-gradient-to-br from-base-100 via-base-200 to-base-300">
       {/* NAVBAR */}
@@ -34,149 +39,157 @@ function HomePage() {
           </Link>
 
           {/* AUTH BTN */}
-          <SignInButton mode="modal">
-            <button className="group px-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-xl text-white font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 flex items-center gap-2">
-              <span>Get Started</span>
-              <ArrowRightIcon className="size-4 group-hover:translate-x-0.5 transition-transform" />
-            </button>
-          </SignInButton>
+          <button
+            onClick={handleGetStarted}
+            className="px-6 py-2 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-xl hover:opacity-90 transition-opacity shadow-lg"
+          >
+            Get Started
+          </button>
         </div>
       </nav>
 
       {/* HERO SECTION */}
-      <div className="max-w-7xl mx-auto px-4 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* LEFT CONTENT */}
-          <div className="space-y-8">
-            <div className="badge badge-primary badge-lg">
-              <ZapIcon className="size-4" />
-              Real-time Collaboration
-            </div>
-
-            <h1 className="text-5xl lg:text-7xl font-black leading-tight">
-              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                Code Together,
-              </span>
-              <br />
-              <span className="text-base-content">Learn Together</span>
-            </h1>
-
-            <p className="text-xl text-base-content/70 leading-relaxed max-w-xl">
-              The ultimate platform for collaborative coding interviews and pair programming.
-              Connect face-to-face, code in real-time, and ace your technical interviews.
-            </p>
-
-            {/* FEATURE PILLS */}
-            <div className="flex flex-wrap gap-3">
-              <div className="badge badge-lg badge-outline">
-                <CheckIcon className="size-4 text-success" />
-                Live Video Chat
-              </div>
-              <div className="badge badge-lg badge-outline">
-                <CheckIcon className="size-4 text-success" />
-                Code Editor
-              </div>
-              <div className="badge badge-lg badge-outline">
-                <CheckIcon className="size-4 text-success" />
-                Multi-Language
-              </div>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4">
-              <SignInButton mode="modal">
-                <button className="btn btn-primary btn-lg">
-                  Start Coding Now
-                  <ArrowRightIcon className="size-5" />
-                </button>
-              </SignInButton>
-
-              <button className="btn btn-outline btn-lg">
-                <VideoIcon className="size-5" />
-                Watch Demo
-              </button>
-            </div>
-
-            {/* STATS */}
-            <div className="stats stats-vertical lg:stats-horizontal bg-base-100 shadow-lg">
-              <div className="stat">
-                <div className="stat-value text-primary">10K+</div>
-                <div className="stat-title">Active Users</div>
-              </div>
-              <div className="stat">
-                <div className="stat-value text-secondary">50K+</div>
-                <div className="stat-title">Sessions</div>
-              </div>
-              <div className="stat">
-                <div className="stat-value text-accent">99.9%</div>
-                <div className="stat-title">Uptime</div>
-              </div>
-            </div>
+      <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6">
+            <SparklesIcon className="w-5 h-5 text-primary" />
+            <span className="text-primary font-medium">Real-Time Coding Platform</span>
           </div>
 
-          {/* RIGHT IMAGE */}
-          <img
-            src="/hero.png"
-            alt="CodeCollab Platform"
-            className="w-full h-auto rounded-3xl shadow-2xl border-4 border-base-100 hover:scale-105 transition-transform duration-500"
-          />
+          <h1 className="text-4xl md:text-6xl font-black max-w-3xl mx-auto leading-tight mb-6">
+            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+              Code Together
+            </span>
+            , Solve Problems,{" "}
+            <span className="bg-gradient-to-r from-accent via-primary to-secondary bg-clip-text text-transparent">
+              Ace Interviews
+            </span>
+          </h1>
+
+          <p className="text-xl text-base-content/70 max-w-2xl mx-auto mb-10">
+            Collaborate with peers in real-time, tackle coding challenges, and prepare for technical interviews with our
+            interactive platform.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+              onClick={handleGetStarted}
+              className="group px-8 py-4 bg-gradient-to-r from-primary to-secondary rounded-2xl transition-all duration-200 hover:opacity-90 shadow-lg"
+            >
+              <div className="flex items-center gap-3 text-white font-bold text-lg">
+                <ZapIcon className="w-6 h-6" />
+                Get Started
+                <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </button>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* FEATURES SECTION */}
-      <div className="max-w-7xl mx-auto px-4 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">
-            Everything You Need to <span className="text-primary font-mono">Succeed</span>
+      <section className="py-16 bg-base-100">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-4xl font-black mb-4">
+              Everything You Need to <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Succeed</span>
+            </h2>
+            <p className="text-base-content/70">
+              Powerful features designed to enhance your coding interview preparation experience
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-base-200/50 p-6 rounded-2xl border border-base-300 hover:border-primary/30 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                <Code2Icon className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Real-Time Code Editor</h3>
+              <p className="text-base-content/70">
+                Collaborate with peers using our powerful Monaco editor with syntax highlighting and auto-completion.
+              </p>
+            </div>
+
+            <div className="bg-base-200/50 p-6 rounded-2xl border border-base-300 hover:border-primary/30 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mb-4">
+                <VideoIcon className="w-6 h-6 text-secondary" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Video & Voice Calls</h3>
+              <p className="text-base-content/70">
+                Communicate face-to-face with crystal-clear video and audio during your coding sessions.
+              </p>
+            </div>
+
+            <div className="bg-base-200/50 p-6 rounded-2xl border border-base-300 hover:border-primary/30 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4">
+                <UsersIcon className="w-6 h-6 text-accent" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Community Collaboration</h3>
+              <p className="text-base-content/70">
+                Join public sessions, discover active coders, and learn from others in real-time.
+              </p>
+            </div>
+
+            <div className="bg-base-200/50 p-6 rounded-2xl border border-base-300 hover:border-primary/30 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                <CheckIcon className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Interview Problems</h3>
+              <p className="text-base-content/70">
+                Access a curated collection of coding problems commonly asked in technical interviews.
+              </p>
+            </div>
+
+            <div className="bg-base-200/50 p-6 rounded-2xl border border-base-300 hover:border-primary/30 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mb-4">
+                <VideoIcon className="w-6 h-6 text-secondary" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Screen Sharing</h3>
+              <p className="text-base-content/70">
+                Share your screen or code editor with session participants for better collaboration.
+              </p>
+            </div>
+
+            <div className="bg-base-200/50 p-6 rounded-2xl border border-base-300 hover:border-primary/30 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4">
+                <SparklesIcon className="w-6 h-6 text-accent" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Instant Feedback</h3>
+              <p className="text-base-content/70">
+                Get real-time feedback on your code execution and test case results.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA SECTION */}
+      <section className="py-16">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-black mb-6">
+            Ready to <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Level Up</span> Your Skills?
           </h2>
-          <p className="text-lg text-base-content/70 max-w-2xl mx-auto">
-            Powerful features designed to make your coding interviews seamless and productive
+          <p className="text-xl text-base-content/70 max-w-2xl mx-auto mb-10">
+            Join thousands of developers preparing for technical interviews and improving their coding skills together.
+          </p>
+          <button
+            onClick={handleGetStarted}
+            className="px-8 py-4 bg-gradient-to-r from-primary to-secondary text-white font-bold rounded-2xl hover:opacity-90 transition-opacity shadow-lg text-lg"
+          >
+            Start Coding Now
+          </button>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="py-8 bg-base-300 border-t border-base-200">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <p className="text-base-content/60">
+            © {new Date().getFullYear()} Talent IQ. All rights reserved.
           </p>
         </div>
-
-        {/* FEATURES GRID */}
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Feature 1 */}
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body items-center text-center">
-              <div className="size-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
-                <VideoIcon className="size-8 text-primary" />
-              </div>
-              <h3 className="card-title">HD Video Call</h3>
-              <p className="text-base-content/70">
-                Crystal clear video and audio for seamless communication during interviews
-              </p>
-            </div>
-          </div>
-
-          {/* Feature 2 */}
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body items-center text-center">
-              <div className="size-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
-                <Code2Icon className="size-8 text-primary" />
-              </div>
-              <h3 className="card-title">Live Code Editor</h3>
-              <p className="text-base-content/70">
-                Collaborate in real-time with syntax highlighting and multiple language support
-              </p>
-            </div>
-          </div>
-
-          {/* Feature 3 */}
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body items-center text-center">
-              <div className="size-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
-                <UsersIcon className="size-8 text-primary" />
-              </div>
-              <h3 className="card-title">Easy Collaboration</h3>
-              <p className="text-base-content/70">
-                Share your screen, discuss solutions, and learn from each other in real-time
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      </footer>
     </div>
   );
 }
+
 export default HomePage;

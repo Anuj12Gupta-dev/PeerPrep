@@ -1,8 +1,8 @@
-import { useUser } from "@clerk/clerk-react";
 import { ArrowRightIcon, SparklesIcon, ZapIcon } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
 
 function WelcomeSection({ onCreateSession }) {
-  const { user } = useUser();
+  const { user } = useAuth();
 
   return (
     <div className="relative overflow-hidden">
@@ -14,7 +14,7 @@ function WelcomeSection({ onCreateSession }) {
                 <SparklesIcon className="w-6 h-6 text-white" />
               </div>
               <h1 className="text-5xl font-black bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                Welcome back, {user?.firstName || "there"}!
+                Welcome back, {user?.name || "there"}!
               </h1>
             </div>
             <p className="text-xl text-base-content/60 ml-16">
@@ -27,7 +27,7 @@ function WelcomeSection({ onCreateSession }) {
           >
             <div className="flex items-center gap-3 text-white font-bold text-lg">
               <ZapIcon className="w-6 h-6" />
-              <span>Create Session</span>
+              Create New Session
               <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </div>
           </button>
