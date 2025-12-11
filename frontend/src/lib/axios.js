@@ -1,7 +1,5 @@
 import axios from "axios";
-import { Clerk } from "@clerk/clerk-react";
-
-const clerk = Clerk;
+import { getClerk } from "@clerk/clerk-react";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -9,7 +7,12 @@ const axiosInstance = axios.create({
 
 // attach token to every request
 axiosInstance.interceptors.request.use(async (config) => {
-  const token = await clerk.session?.getToken();
+  const clerk = getClerk();
+
+  // Clerk may not be loaded instantly
+  if (!clerk || !clerk.session) return config;
+
+  const token = await clerk.session.getToken();
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
