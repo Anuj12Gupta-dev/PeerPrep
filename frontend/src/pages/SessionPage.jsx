@@ -7,13 +7,14 @@ import { executeCode } from "../lib/piston";
 import Navbar from "../components/Navbar";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { getDifficultyBadgeClass } from "../lib/utils";
-import { Loader2Icon, LogOutIcon, PhoneOffIcon } from "lucide-react";
+import { Loader2Icon, LogOutIcon, PhoneOffIcon, ShareIcon } from "lucide-react";
 import CodeEditorPanel from "../components/CodeEditorPanel";
 import OutputPanel from "../components/OutputPanel";
 
 import useStreamClient from "../hooks/useStreamClient";
 import { StreamCall, StreamVideo } from "@stream-io/video-react-sdk";
 import VideoCallUI from "../components/VideoCallUI";
+import toast from "react-hot-toast";
 
 function SessionPage() {
   const navigate = useNavigate();
@@ -51,9 +52,7 @@ function SessionPage() {
     if (!session || !user || loadingSession) return;
     if (isHost || isParticipant) return;
 
-    joinSessionMutation.mutate(id, { onSuccess: refetch });
-
-    // remove the joinSessionMutation, refetch from dependencies to avoid infinite loop
+    joinSessionMutation.mutate({ id }, { onSuccess: refetch });
   }, [session, user, loadingSession, isHost, isParticipant, id]);
 
   // redirect the "participant" when session ends
@@ -93,6 +92,15 @@ function SessionPage() {
       // this will navigate the HOST to dashboard
       endSessionMutation.mutate(id, { onSuccess: () => navigate("/dashboard") });
     }
+  };
+
+  const handleShareSession = () => {
+    const sessionUrl = `${window.location.origin}/session/${id}`;
+    navigator.clipboard.writeText(sessionUrl).then(() => {
+      toast.success("Session link copied to clipboard!");
+    }).catch(() => {
+      toast.error("Failed to copy link to clipboard");
+    });
   };
 
   return (
@@ -144,6 +152,15 @@ function SessionPage() {
                               <LogOutIcon className="w-4 h-4" />
                             )}
                             End Session
+                          </button>
+                        )}
+                        {session?.status === "active" && (
+                          <button
+                            onClick={handleShareSession}
+                            className="btn btn-outline gap-2"
+                          >
+                            <ShareIcon className="w-4 h-4" />
+                            Share
                           </button>
                         )}
                         {session?.status === "completed" && (
