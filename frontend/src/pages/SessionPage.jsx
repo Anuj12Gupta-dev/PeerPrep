@@ -52,7 +52,7 @@ function SessionPage() {
     if (!session || !user || loadingSession) return;
     if (isHost || isParticipant) return;
 
-    joinSessionMutation.mutate({ id }, { onSuccess: refetch });
+    joinSessionMutation.mutate(id , { onSuccess: refetch });
   }, [session, user, loadingSession, isHost, isParticipant, id]);
 
   // redirect the "participant" when session ends
