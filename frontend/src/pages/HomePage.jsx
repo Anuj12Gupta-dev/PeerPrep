@@ -11,6 +11,7 @@ import {
   ZapIcon,
 } from "lucide-react";
 import { SignInButton } from "@clerk/clerk-react";
+import AboutUsPage from "../components/AboutUs";
 
 function HomePage() {
   return (
@@ -26,12 +27,13 @@ function HomePage() {
           </Link>
 
           <div className="flex items-center gap-6">
-            <Link to="/pricing" className="text-sm font-medium text-slate-400 hover:text-white transition-colors hidden sm:block">
-              Pricing
-            </Link>
-            <Link to="/about" className="text-sm font-medium text-slate-400 hover:text-white transition-colors hidden sm:block">
-              About
-            </Link>
+            <a href="#about-us" className="text-sm font-medium text-slate-400 hover:text-white transition-colors hidden sm:block">
+              About Us
+            </a>
+
+            <a href="#contact-us" className="text-sm font-medium text-slate-400 hover:text-white transition-colors hidden sm:block">
+              Contact Us
+            </a>
             
             <SignInButton mode="modal">
               <button className="px-5 py-2 text-sm font-medium rounded-full bg-white text-slate-950 hover:bg-blue-50 transition-colors">
@@ -139,7 +141,9 @@ function HomePage() {
         </div>
       </main>
 
-      <footer className="border-t border-white/5 bg-slate-950 py-16 px-6">
+      <AboutUsPage />
+
+      <footer className="border-t border-white/5 bg-slate-950 py-16 px-6" id="contact-us">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           
           <div className="col-span-2 md:col-span-1 space-y-4">
@@ -189,9 +193,9 @@ function HomePage() {
           </p>
           
           <div className="flex items-center gap-4">
-             <a href="#" className="text-slate-500 hover:text-white transition-colors"><TwitterIcon className="size-5" /></a>
-             <a href="#" className="text-slate-500 hover:text-white transition-colors"><GithubIcon className="size-5" /></a>
-             <a href="#" className="text-slate-500 hover:text-white transition-colors"><LinkedinIcon className="size-5" /></a>
+             <a href="https://x.com/anujguptaaj123" target="_blank" className="text-slate-500 hover:text-white transition-colors"><TwitterIcon className="size-5" /></a>
+             <a href="https://github.com/Anuj12Gupta-dev" target="_blank"  className="text-slate-500 hover:text-white transition-colors"><GithubIcon className="size-5" /></a>
+             <a href="https://www.linkedin.com/in/anuj-gupta-b930a0264/" target="_blank" className="text-slate-500 hover:text-white transition-colors"><LinkedinIcon className="size-5" /></a>
           </div>
         </div>
       </footer>
