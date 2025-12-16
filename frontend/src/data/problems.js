@@ -7,20 +7,21 @@ export const PROBLEMS = {
     description: {
       text: "Given an array of integers nums and an integer target, return indices of the two numbers in the array such that they add up to target.",
       notes: [
-        "You may assume that each input would have exactly one solution, and you may not use the same element twice.",
-        "You can return the answer in any order.",
-      ],
+        "You may assume that each input would have exactly one solution.",
+        "You may not use the same element twice.",
+        "You can return the answer in any order."
+      ]
     },
     examples: [
       { input: "nums = [2,7,11,15], target = 9", output: "[0,1]" },
       { input: "nums = [3,2,4], target = 6", output: "[1,2]" },
-      { input: "nums = [3,3], target = 6", output: "[0,1]" },
+      { input: "nums = [3,3], target = 6", output: "[0,1]" }
     ],
     constraints: [
       "2 ≤ nums.length ≤ 10⁴",
       "-10⁹ ≤ nums[i] ≤ 10⁹",
       "-10⁹ ≤ target ≤ 10⁹",
-      "Only one valid answer exists",
+      "Only one valid answer exists"
     ],
     starterCode: {
       javascript: `function twoSum(nums, target) {
@@ -28,11 +29,10 @@ export const PROBLEMS = {
 }`,
       python: `def twoSum(nums, target):
     pass`,
-      java: `
-public static int[] twoSum(int[] nums, int target) {
+      java: `public static int[] twoSum(int[] nums, int target) {
+    // Write your solution here
     return new int[0];
-}
-`,
+}`
     },
     testCases: {
       javascript: `
@@ -51,13 +51,13 @@ public static void main(String[] args) {
     System.out.println(Arrays.toString(twoSum(new int[]{3,2,4},6)));
     System.out.println(Arrays.toString(twoSum(new int[]{3,3},6)));
 }
-`,
+`
     },
     expectedOutput: {
       javascript: "[0,1]\n[1,2]\n[0,1]",
       python: "[0, 1]\n[1, 2]\n[0, 1]",
-      java: "[0, 1]\n[1, 2]\n[0, 1]",
-    },
+      java: "[0, 1]\n[1, 2]\n[0, 1]"
+    }
   },
 
   "reverse-string": {
@@ -66,45 +66,46 @@ public static void main(String[] args) {
     difficulty: "Easy",
     category: "String • Two Pointers",
     description: {
-      text: "Write a function that reverses a string.",
-      notes: ["Must be done in-place."],
+      text: "Write a function that reverses a character array in-place.",
+      notes: ["Must be done in-place with O(1) extra memory."]
     },
     examples: [
-      { input: '["h","e","l","l","o"]', output: '["o","l","l","e","h"]' },
+      { input: '["h","e","l","l","o"]', output: '["o","l","l","e","h"]' }
     ],
     constraints: ["1 ≤ s.length ≤ 10⁵"],
     starterCode: {
-      javascript: `function reverseString(s) {}`,
-      python: `def reverseString(s): pass`,
-      java: `
-public static void reverseString(char[] s) {
-}
-`,
+      javascript: `function reverseString(s) {
+  // Modify s in-place
+}`,
+      python: `def reverseString(s):
+    pass`,
+      java: `public static void reverseString(char[] s) {
+}`
     },
     testCases: {
       javascript: `
-let a=["h","e","l","l","o"];
+let a = ["h","e","l","l","o"];
 reverseString(a);
 console.log(a);
 `,
       python: `
-a=["h","e","l","l","o"]
+a = ["h","e","l","l","o"]
 reverseString(a)
 print(a)
 `,
       java: `
 public static void main(String[] args) {
-    char[] a={'h','e','l','l','o'};
+    char[] a = {'h','e','l','l','o'};
     reverseString(a);
     System.out.println(Arrays.toString(a));
 }
-`,
+`
     },
     expectedOutput: {
       javascript: '["o","l","l","e","h"]',
       python: "['o', 'l', 'l', 'e', 'h']",
-      java: "[o, l, l, e, h]",
-    },
+      java: "[o, l, l, e, h]"
+    }
   },
 
   "valid-palindrome": {
@@ -113,21 +114,23 @@ public static void main(String[] args) {
     difficulty: "Easy",
     category: "String • Two Pointers",
     description: {
-      text: "Return true if palindrome after removing non-alphanumeric.",
-      notes: [],
+      text: "Return true if the string is a palindrome after converting to lowercase and removing non-alphanumeric characters.",
+      notes: []
     },
     examples: [
       { input: `"A man, a plan, a canal: Panama"`, output: "true" },
+      { input: `"race a car"`, output: "false" }
     ],
-    constraints: ["1 ≤ s.length ≤ 2*10⁵"],
+    constraints: ["1 ≤ s.length ≤ 2 × 10⁵"],
     starterCode: {
-      javascript: `function isPalindrome(s) {}`,
-      python: `def isPalindrome(s): pass`,
-      java: `
-public static boolean isPalindrome(String s) {
+      javascript: `function isPalindrome(s) {
+  // Write your solution here
+}`,
+      python: `def isPalindrome(s):
+    pass`,
+      java: `public static boolean isPalindrome(String s) {
     return false;
-}
-`,
+}`
     },
     testCases: {
       javascript: `
@@ -143,36 +146,37 @@ public static void main(String[] args) {
     System.out.println(isPalindrome("A man, a plan, a canal: Panama"));
     System.out.println(isPalindrome("race a car"));
 }
-`,
+`
     },
     expectedOutput: {
       javascript: "true\nfalse",
       python: "True\nFalse",
-      java: "true\nfalse",
-    },
+      java: "true\nfalse"
+    }
   },
 
   "maximum-subarray": {
     id: "maximum-subarray",
     title: "Maximum Subarray",
     difficulty: "Medium",
-    category: "Array • DP",
+    category: "Array • Dynamic Programming",
     description: {
-      text: "Find subarray with max sum.",
-      notes: [],
+      text: "Find the contiguous subarray with the largest sum and return its sum.",
+      notes: ["Kadane’s Algorithm expected."]
     },
     examples: [
-      { input: "[-2,1,-3,4,-1,2,1,-5,4]", output: "6" },
+      { input: "[-2,1,-3,4,-1,2,1,-5,4]", output: "6" }
     ],
     constraints: ["1 ≤ nums.length ≤ 10⁵"],
     starterCode: {
-      javascript: `function maxSubArray(nums) {}`,
-      python: `def maxSubArray(nums): pass`,
-      java: `
-public static int maxSubArray(int[] nums) {
+      javascript: `function maxSubArray(nums) {
+  // Write your solution here
+}`,
+      python: `def maxSubArray(nums):
+    pass`,
+      java: `public static int maxSubArray(int[] nums) {
     return 0;
-}
-`,
+}`
     },
     testCases: {
       javascript: `
@@ -185,18 +189,18 @@ print(maxSubArray([-2,1,-3,4,-1,2,1,-5,4]))
 public static void main(String[] args) {
     System.out.println(maxSubArray(new int[]{-2,1,-3,4,-1,2,1,-5,4}));
 }
-`,
+`
     },
     expectedOutput: {
       javascript: "6",
       python: "6",
-      java: "6",
-    },
-  },
+      java: "6"
+    }
+  }
 };
 
 export const LANGUAGE_CONFIG = {
   javascript: { name: "JavaScript", icon: "/javascript.png", monacoLang: "javascript" },
   python: { name: "Python", icon: "/python.png", monacoLang: "python" },
-  java: { name: "Java", icon: "/java.png", monacoLang: "java" },
+  java: { name: "Java", icon: "/java.png", monacoLang: "java" }
 };

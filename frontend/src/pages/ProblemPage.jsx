@@ -70,14 +70,18 @@ function ProblemPage() {
         code + "\n" + (currentProblem.testCases?.[selectedLanguage] || "");
     } else {
       completedCode = `
-import java.util.*;
-public class Main {
-${code}
+          import java.util.*;
+          class Solution {
 
-${currentProblem.testCases?.java || ""}
-}
-`;
+          ${code}
+
+             
+                  ${currentProblem.testCases?.java || ""}
+          }
+          `;
     }
+    console.log(completedCode)
+
 
     try {
       const result = await executeCode(selectedLanguage, completedCode);
@@ -103,7 +107,7 @@ ${currentProblem.testCases?.java || ""}
       expectedLines.forEach((exp, i) => {
         const pass =
           normalizeOutput(actualLines[i]) === normalizeOutput(exp);
-        results[i] = { passed: pass };
+        results[i] = { passed: pass, actualOutput: actualLines[i] || "", expectedOutput: exp };
         if (!pass) allPassed = false;
       });
 
