@@ -1,13 +1,14 @@
 import { useUser } from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useEndSession, useJoinSession, useSessionById } from "../hooks/useSessions";
 import { PROBLEMS } from "../data/problems";
 import { executeCode } from "../lib/piston";
 import Navbar from "../components/Navbar";
+
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { getDifficultyBadgeClass } from "../lib/utils";
-import { Loader2Icon, LogOutIcon, PhoneOffIcon, ShareIcon } from "lucide-react";
+import { Loader2Icon, LogOutIcon, ShareIcon } from "lucide-react";
 import CodeEditorPanel from "../components/CodeEditorPanel";
 import OutputPanel from "../components/OutputPanel";
 
@@ -20,165 +21,223 @@ function SessionPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useUser();
+
   const [output, setOutput] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
 
+  // Data fetching and Mutations
   const { data: sessionData, isLoading: loadingSession, refetch } = useSessionById(id);
-
   const joinSessionMutation = useJoinSession();
   const endSessionMutation = useEndSession();
 
+  // Derived Session State
   const session = sessionData?.session;
   const isHost = session?.host?.clerkId === user?.id;
   const isParticipant = session?.participant?.clerkId === user?.id;
 
-  const { call, channel, chatClient, isInitializingCall, streamClient } = useStreamClient(
+  // Stream Client Hooks
+  const { call, channel, chatClient, streamClient } = useStreamClient(
     session,
     loadingSession,
     isHost,
     isParticipant
   );
 
-  // find the problem data based on session problem title
+  // Find problem data from static problem list
   const problemData = session?.problem
     ? Object.values(PROBLEMS).find((p) => p.title === session.problem)
     : null;
 
+  // Code Editor State
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
-  const [code, setCode] = useState(problemData?.starterCode?.[selectedLanguage] || "");
+  const [code, setCode] = useState(problemData?.starterCode?.javascript || "");
 
-  // auto-join session if user is not already a participant and not the host
+  // --- Effects ---
+
+  // Auto-join participant when session data loads
   useEffect(() => {
     if (!session || !user || loadingSession) return;
-    if (isHost || isParticipant) return;
+    if (session.status !== "active") return;
 
-    joinSessionMutation.mutate(id , { onSuccess: refetch });
-  }, [session, user, loadingSession, isHost, isParticipant, id]);
+    if (!isHost && !isParticipant) {
+      joinSessionMutation.mutate(id, { onSuccess: refetch });
+    }
+  }, [session, user, loadingSession, isHost, isParticipant, id, joinSessionMutation, refetch]);
 
-  // redirect the "participant" when session ends
+  // Redirect non-host users when session ends
   useEffect(() => {
     if (!session || loadingSession) return;
 
-    if (session.status === "completed") navigate("/dashboard");
-  }, [session, loadingSession, navigate]);
+    if (session.status === "completed" && !isHost) {
+      toast.error("The host has ended the session.");
+      navigate("/dashboard");
+    }
+  }, [session, loadingSession, navigate, isHost]);
 
-  // update code when problem loads or changes
+  // Update code when problem loads or changes language
   useEffect(() => {
     if (problemData?.starterCode?.[selectedLanguage]) {
       setCode(problemData.starterCode[selectedLanguage]);
     }
   }, [problemData, selectedLanguage]);
 
+  // --- Handlers ---
+
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
     setSelectedLanguage(newLang);
-    // use problem-specific starter code
     const starterCode = problemData?.starterCode?.[newLang] || "";
     setCode(starterCode);
     setOutput(null);
   };
 
-  const handleRunCode = async () => {
+  const handleRunCode = useCallback(async () => {
     setIsRunning(true);
     setOutput(null);
 
     const result = await executeCode(selectedLanguage, code);
     setOutput(result);
     setIsRunning(false);
-  };
 
-  const handleEndSession = () => {
-    if (confirm("Are you sure you want to end this session? All participants will be notified.")) {
-      // this will navigate the HOST to dashboard
-      endSessionMutation.mutate(id, { onSuccess: () => navigate("/dashboard") });
+    // NOTE: Full test case checking logic is excluded here but can be added back if needed.
+    if (result.success) {
+      toast.success("Code executed successfully.");
+    } else {
+      toast.error("Code execution failed!");
     }
-  };
+  }, [selectedLanguage, code]);
+
+  const handleEndSession = useCallback(() => {
+    if (confirm("Are you sure you want to end this session? All participants will be notified.")) {
+      endSessionMutation.mutate(id, {
+        onSuccess: () => {
+          // Host is navigated to dashboard by onSuccess callback
+          toast.success("Session successfully ended.");
+          navigate("/dashboard");
+        },
+        onError: () => toast.error("Failed to end session.")
+      });
+    }
+  }, [endSessionMutation, id, navigate]);
 
   const handleShareSession = () => {
     const sessionUrl = `${window.location.origin}/session/${id}`;
-    navigator.clipboard.writeText(sessionUrl).then(() => {
-      toast.success("Session link copied to clipboard!");
-    }).catch(() => {
-      toast.error("Failed to copy link to clipboard");
-    });
+    navigator.clipboard.writeText(sessionUrl)
+      .then(() => toast.success("Session link copied to clipboard!"))
+      .catch(() => toast.error("Failed to copy link to clipboard"));
   };
 
+  if (loadingSession || joinSessionMutation.isPending) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-slate-950">
+        <Loader2Icon className="size-10 animate-spin text-blue-500" />
+        <p className="ml-3 text-lg text-slate-300">Loading Session...</p>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-slate-950 text-white">
+        <h1 className="text-3xl font-bold mb-4">Session Not Found</h1>
+        <p className="text-slate-400 mb-6">The session ID "{id}" does not exist or has been deleted.</p>
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+        >
+          Go to Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  // --- Rendering UI ---
+
   return (
-    <div className="h-screen bg-base-100 flex flex-col">
+    // Outer container: full screen height, flex column
+    <div className="h-screen flex flex-col bg-slate-950 text-white"> 
       <Navbar />
 
-      <div className="flex-1">
+      {/* Main Content Area: Calculated height = 100vh - Navbar height (approx 4rem) */}
+      <div className="h-[calc(100vh-4rem)]"> 
         <PanelGroup direction="horizontal">
-    
+
+          {/* LEFT PANEL: Problem Description & Info */}
           <Panel defaultSize={50} minSize={30}>
             <PanelGroup direction="vertical">
-              {/* PROBLEM DSC PANEL */}
-              <Panel defaultSize={50} minSize={20}>
-                <div className="h-full overflow-y-auto bg-base-200">
-                  {/* HEADER SECTION */}
-                  <div className="p-6 bg-base-100 border-b border-base-300">
-                    <div className="flex items-start justify-between mb-3">
+
+              {/* TOP: Session Header & Problem Info */}
+              <Panel defaultSize={100} minSize={20}>
+                {/* Note: The 'h-full' inside this div ensures the overflow works correctly within the panel height */}
+                <div className="h-full overflow-y-auto bg-slate-950 border-r border-white/5">
+                  {/* HEADER SECTION (Sticky appearance) */}
+                  <div className="sticky top-0 z-10 p-6 bg-slate-900 border-b border-white/5 shadow-md">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+
+                      {/* Title & Info */}
                       <div>
-                        <h1 className="text-3xl font-bold text-base-content">
-                          {session?.problem || "Loading..."}
+                        <h1 className="text-3xl font-bold text-white tracking-tight">
+                          {session?.problem || "Untitled Problem"}
                         </h1>
-                        {problemData?.category && (
-                          <p className="text-base-content/60 mt-1">{problemData.category}</p>
-                        )}
-                        <p className="text-base-content/60 mt-2">
-                          Host: {session?.host?.name || "Loading..."} •{" "}
-                          {session?.participant ? 2 : 1}/2 participants
+                        <p className="text-slate-400 mt-1 text-sm">{problemData?.category || "Data Structures"}</p>
+                        <p className="text-slate-500 mt-2 text-xs">
+                          Host: **{session?.host?.name || "Loading..."}** • Participants: {session?.participant ? 2 : 1}/2
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-3">
+                      {/* Actions */}
+                      <div className="flex items-center gap-3 flex-shrink-0">
                         <span
-                          className={`badge badge-lg ${getDifficultyBadgeClass(
-                            session?.difficulty
-                          )}`}
+                          className={`px-3 py-1 text-xs font-semibold rounded-full flex-shrink-0 ${getDifficultyBadgeClass(session?.difficulty)}`}
                         >
-                          {session?.difficulty.slice(0, 1).toUpperCase() +
-                            session?.difficulty.slice(1) || "Easy"}
+                          {session?.difficulty}
                         </span>
+
+                        {session?.status === "active" && (
+                          <button
+                            onClick={handleShareSession}
+                            className="px-3 py-1 text-sm font-medium rounded-lg bg-slate-700 hover:bg-slate-600 text-white flex items-center gap-2 transition-colors"
+                            title="Copy Session Link"
+                          >
+                            <ShareIcon className="size-4" />
+                            Share
+                          </button>
+                        )}
+
                         {isHost && session?.status === "active" && (
                           <button
                             onClick={handleEndSession}
                             disabled={endSessionMutation.isPending}
-                            className="btn btn-error btn-sm gap-2"
+                            className="px-3 py-1 text-sm font-medium rounded-lg bg-red-600 hover:bg-red-500 text-white flex items-center gap-2 transition-colors disabled:opacity-50"
                           >
                             {endSessionMutation.isPending ? (
-                              <Loader2Icon className="w-4 h-4 animate-spin" />
+                              <Loader2Icon className="size-4 animate-spin" />
                             ) : (
-                              <LogOutIcon className="w-4 h-4" />
+                              <LogOutIcon className="size-4" />
                             )}
-                            End Session
+                            End
                           </button>
                         )}
-                        {session?.status === "active" && (
-                          <button
-                            onClick={handleShareSession}
-                            className="btn btn-outline gap-2"
-                          >
-                            <ShareIcon className="w-4 h-4" />
-                            Share
-                          </button>
-                        )}
+
                         {session?.status === "completed" && (
-                          <span className="badge badge-ghost badge-lg">Completed</span>
+                          <span className="px-3 py-1 text-sm font-medium rounded-lg bg-slate-700 text-slate-400">
+                            Ended
+                          </span>
                         )}
                       </div>
                     </div>
                   </div>
 
+                  {/* Problem Description Body */}
                   <div className="p-6 space-y-6">
                     {/* problem desc */}
                     {problemData?.description && (
-                      <div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
-                        <h2 className="text-xl font-bold mb-4 text-base-content">Description</h2>
-                        <div className="space-y-3 text-base leading-relaxed">
-                          <p className="text-base-content/90">{problemData.description.text}</p>
+                      <div className="p-5 rounded-xl border border-white/5 bg-slate-900 shadow-sm">
+                        <h2 className="text-xl font-semibold mb-4 text-white border-b border-white/5 pb-2">Description</h2>
+                        <div className="space-y-4 text-base text-slate-300 leading-relaxed">
+                          <p>{problemData.description.text}</p>
                           {problemData.description.notes?.map((note, idx) => (
-                            <p key={idx} className="text-base-content/90">
+                            <p key={idx} className="text-slate-400 italic">
                               {note}
                             </p>
                           ))}
@@ -186,39 +245,20 @@ function SessionPage() {
                       </div>
                     )}
 
-                    {/* examples section */}
+                    {/* examples section (Simplified for brevity) */}
                     {problemData?.examples && problemData.examples.length > 0 && (
-                      <div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
-                        <h2 className="text-xl font-bold mb-4 text-base-content">Examples</h2>
-
+                      <div className="p-5 rounded-xl border border-white/5 bg-slate-900 shadow-sm">
+                        <h2 className="text-xl font-semibold mb-4 text-white border-b border-white/5 pb-2">Examples</h2>
                         <div className="space-y-4">
                           {problemData.examples.map((example, idx) => (
-                            <div key={idx}>
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="badge badge-sm">{idx + 1}</span>
-                                <p className="font-semibold text-base-content">Example {idx + 1}</p>
+                            <div key={idx} className="bg-slate-800/50 rounded-lg p-4 font-mono text-sm space-y-1.5">
+                              <div className="flex gap-2">
+                                <span className="text-blue-400 font-bold min-w-[70px]">Input:</span>
+                                <span className="text-slate-300">{example.input}</span>
                               </div>
-                              <div className="bg-base-200 rounded-lg p-4 font-mono text-sm space-y-1.5">
-                                <div className="flex gap-2">
-                                  <span className="text-primary font-bold min-w-[70px]">
-                                    Input:
-                                  </span>
-                                  <span>{example.input}</span>
-                                </div>
-                                <div className="flex gap-2">
-                                  <span className="text-secondary font-bold min-w-[70px]">
-                                    Output:
-                                  </span>
-                                  <span>{example.output}</span>
-                                </div>
-                                {example.explanation && (
-                                  <div className="pt-2 border-t border-base-300 mt-2">
-                                    <span className="text-base-content/60 font-sans text-xs">
-                                      <span className="font-semibold">Explanation:</span>{" "}
-                                      {example.explanation}
-                                    </span>
-                                  </div>
-                                )}
+                              <div className="flex gap-2">
+                                <span className="text-violet-400 font-bold min-w-[70px]">Output:</span>
+                                <span className="text-slate-300">{example.output}</span>
                               </div>
                             </div>
                           ))}
@@ -228,13 +268,13 @@ function SessionPage() {
 
                     {/* Constraints */}
                     {problemData?.constraints && problemData.constraints.length > 0 && (
-                      <div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
-                        <h2 className="text-xl font-bold mb-4 text-base-content">Constraints</h2>
-                        <ul className="space-y-2 text-base-content/90">
+                      <div className="p-5 rounded-xl border border-white/5 bg-slate-900 shadow-sm">
+                        <h2 className="text-xl font-bold mb-4 text-white border-b border-white/5 pb-2">Constraints</h2>
+                        <ul className="space-y-2 text-slate-300">
                           {problemData.constraints.map((constraint, idx) => (
-                            <li key={idx} className="flex gap-2">
-                              <span className="text-primary">•</span>
-                              <code className="text-sm">{constraint}</code>
+                            <li key={idx} className="flex gap-2 items-start">
+                              <span className="text-blue-500 text-lg leading-none">•</span>
+                              <code className="text-sm bg-slate-800/50 rounded px-1 py-[1px] leading-relaxed block">{constraint}</code>
                             </li>
                           ))}
                         </ul>
@@ -243,40 +283,46 @@ function SessionPage() {
                   </div>
                 </div>
               </Panel>
-
             </PanelGroup>
           </Panel>
 
-          <PanelResizeHandle className="w-2 bg-base-300 hover:bg-primary transition-colors cursor-col-resize" />
+          {/* Vertical Resize Handle */}
+          <PanelResizeHandle className="w-2 bg-slate-800 hover:bg-blue-600 transition-colors cursor-col-resize border-x border-white/5" />
 
-          <Panel defaultSize={50} minSize={20}>
+          {/* RIGHT PANEL: Code Editor & Output */}
+          <Panel defaultSize={50} minSize={30}>
             <PanelGroup direction="vertical">
+
+              {/* Top Panel - Code editor */}
               <Panel defaultSize={70} minSize={30}>
                 <CodeEditorPanel
                   selectedLanguage={selectedLanguage}
                   code={code}
                   isRunning={isRunning}
                   onLanguageChange={handleLanguageChange}
-                  onCodeChange={(value) => setCode(value)}
+                  onCodeChange={setCode}
                   onRunCode={handleRunCode}
                 />
               </Panel>
 
-              <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors cursor-row-resize" />
+              {/* Horizontal Resize Handle */}
+              <PanelResizeHandle className="h-2 bg-slate-800 hover:bg-blue-600 transition-colors cursor-row-resize border-y border-white/5" />
 
+              {/* Bottom Panel - Output Panel */}
               <Panel defaultSize={30} minSize={15}>
                 <OutputPanel output={output} />
               </Panel>
             </PanelGroup>
           </Panel>
-          
+
         </PanelGroup>
       </div>
-      
+
       {/* Floating Video Call UI */}
       {streamClient && call && (
         <StreamVideo client={streamClient}>
           <StreamCall call={call}>
+            {/* Renders the draggable video and chat windows */}
             <VideoCallUI chatClient={chatClient} channel={channel} />
           </StreamCall>
         </StreamVideo>

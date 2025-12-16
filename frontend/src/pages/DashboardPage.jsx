@@ -42,32 +42,47 @@ function DashboardPage() {
   const recentSessions = recentSessionsData?.sessions || [];
 
   const isUserInSession = (session) => {
-    if (!user.id) return false;
+    if (!user?.id) return false;
 
     return session.host?.clerkId === user.id || session.participant?.clerkId === user.id;
   };
 
   return (
     <>
-      <div className="min-h-screen bg-base-300">
-        <Navbar />
-        <WelcomeSection onCreateSession={() => setShowCreateModal(true)} />
+      <div className="min-h-screen bg-slate-950 text-slate-100 font-sans">
+        <Navbar /> 
 
-        {/* Grid layout */}
-        <div className="container mx-auto px-6 pb-16">
+        <WelcomeSection 
+          onCreateSession={() => setShowCreateModal(true)} 
+        />
+
+        <div className="max-w-7xl mx-auto px-6 pb-16 pt-8">
+          
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <StatsCards
-              activeSessionsCount={activeSessions.length}
-              recentSessionsCount={recentSessions.length}
-            />
-            <ActiveSessions
-              sessions={activeSessions}
-              isLoading={loadingActiveSessions}
-              isUserInSession={isUserInSession}
+            
+            <div className="lg:col-span-1">
+              <StatsCards
+                activeSessionsCount={activeSessions.length}
+                recentSessionsCount={recentSessions.length}
+              />
+            </div>
+
+            <div className="lg:col-span-2">
+              <ActiveSessions
+                sessions={activeSessions}
+                isLoading={loadingActiveSessions}
+                isUserInSession={isUserInSession}
+              />
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <RecentSessions 
+              sessions={recentSessions} 
+              isLoading={loadingRecentSessions} 
             />
           </div>
 
-          <RecentSessions sessions={recentSessions} isLoading={loadingRecentSessions} />
         </div>
       </div>
 

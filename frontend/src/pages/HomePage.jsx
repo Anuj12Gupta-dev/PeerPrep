@@ -1,9 +1,11 @@
 import { Link } from "react-router";
 import {
   ArrowRightIcon,
-  CheckIcon,
   Code2Icon,
+  GithubIcon,
+  LinkedinIcon,
   SparklesIcon,
+  TwitterIcon,
   UsersIcon,
   VideoIcon,
   ZapIcon,
@@ -12,171 +14,190 @@ import { SignInButton } from "@clerk/clerk-react";
 
 function HomePage() {
   return (
-    <div className="bg-gradient-to-br from-base-100 via-base-200 to-base-300">
-      {/* NAVBAR */}
-      <nav className="bg-base-100/80 backdrop-blur-md border-b border-primary/20 sticky top-0 z-50 shadow-lg">
-        <div className="max-w-7xl mx-auto p-4 flex items-center justify-between">
-          {/* LOGO */}
-          <Link
-            to={"/"}
-            className="flex items-center gap-3 hover:scale-105 transition-transform duration-200"
-          >
-            <div className="size-10 rounded-xl bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center shadow-lg">
-              <SparklesIcon className="size-6 text-white" />
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-blue-500/30 flex flex-col">
+      
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-slate-950/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="size-9 rounded-lg bg-blue-600 flex items-center justify-center group-hover:bg-blue-500 transition-colors">
+              <SparklesIcon className="size-5 text-white fill-white" />
             </div>
-
-            <div className="flex flex-col">
-              <span className="font-black text-xl bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent font-mono tracking-wider">
-                PeerPrep
-              </span>
-              <span className="text-xs text-base-content/60 font-medium -mt-1">Code Together</span>
-            </div>
+            <span className="font-bold text-lg tracking-tight">PeerPrep</span>
           </Link>
 
-          {/* AUTH BTN */}
-          <SignInButton mode="modal">
-            <button className="group px-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-xl text-white font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 flex items-center gap-2">
-              <span>Get Started</span>
-              <ArrowRightIcon className="size-4 group-hover:translate-x-0.5 transition-transform" />
-            </button>
-          </SignInButton>
+          <div className="flex items-center gap-6">
+            <Link to="/pricing" className="text-sm font-medium text-slate-400 hover:text-white transition-colors hidden sm:block">
+              Pricing
+            </Link>
+            <Link to="/about" className="text-sm font-medium text-slate-400 hover:text-white transition-colors hidden sm:block">
+              About
+            </Link>
+            
+            <SignInButton mode="modal">
+              <button className="px-5 py-2 text-sm font-medium rounded-full bg-white text-slate-950 hover:bg-blue-50 transition-colors">
+                Sign In
+              </button>
+            </SignInButton>
+          </div>
         </div>
       </nav>
 
-      {/* HERO SECTION */}
-      <div className="max-w-7xl mx-auto px-4 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* LEFT CONTENT */}
-          <div className="space-y-8">
-            <div className="badge badge-primary badge-lg">
-              <ZapIcon className="size-4" />
-              Real-time Collaboration
-            </div>
-
-            <h1 className="text-5xl lg:text-7xl font-black leading-tight">
-              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                Code Together,
-              </span>
-              <br />
-              <span className="text-base-content">Learn Together</span>
-            </h1>
-
-            <p className="text-xl text-base-content/70 leading-relaxed max-w-xl">
-              The ultimate platform for collaborative coding interviews and pair programming.
-              Connect face-to-face, code in real-time, and ace your technical interviews.
-            </p>
-
-            {/* FEATURE PILLS */}
-            <div className="flex flex-wrap gap-3">
-              <div className="badge badge-lg badge-outline">
-                <CheckIcon className="size-4 text-success" />
-                Live Video Chat
+      <main className="flex-grow pt-32 pb-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          
+          <div className="grid lg:grid-cols-2 gap-16 items-center mb-32">
+            
+            <div className="space-y-8 relative z-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-500/20 bg-blue-500/10 text-blue-400 text-xs font-medium uppercase tracking-wider">
+                <ZapIcon className="size-3" />
+                Version 2.0 is live
               </div>
-              <div className="badge badge-lg badge-outline">
-                <CheckIcon className="size-4 text-success" />
-                Code Editor
-              </div>
-              <div className="badge badge-lg badge-outline">
-                <CheckIcon className="size-4 text-success" />
-                Multi-Language
-              </div>
-            </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4">
-              <SignInButton mode="modal">
-                <button className="btn btn-primary btn-lg">
-                  Start Coding Now
-                  <ArrowRightIcon className="size-5" />
+              <h1 className="text-5xl lg:text-7xl font-semibold tracking-tight leading-[1.1]">
+                Master the <br />
+                <span className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
+                  Technical Interview
+                </span>
+              </h1>
+
+              <p className="text-lg text-slate-400 max-w-lg leading-relaxed">
+                Join thousands of developers using PeerPrep to practice coding interviews 
+                in real-time. Video chat, collaborative editor, and instant feedback.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-4">
+                <SignInButton mode="modal">
+                  <button className="h-12 px-8 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium transition-all hover:scale-105 flex items-center gap-2">
+                    Start Coding
+                    <ArrowRightIcon className="size-4" />
+                  </button>
+                </SignInButton>
+                
+                <button className="h-12 px-8 rounded-full border border-white/10 hover:border-white/20 hover:bg-white/5 font-medium transition-all flex items-center gap-2">
+                  <VideoIcon className="size-4 text-slate-400" />
+                  Watch Demo
                 </button>
-              </SignInButton>
+              </div>
 
-              <button className="btn btn-outline btn-lg">
-                <VideoIcon className="size-5" />
-                Watch Demo
-              </button>
+              <div className="pt-8 border-t border-white/5 flex items-center gap-4">
+                <div className="flex -space-x-3">
+                   {[1,2,3,4].map((i) => (
+                     <div key={i} className="size-10 rounded-full bg-slate-800 border-2 border-slate-950 overflow-hidden">
+                       <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="User" className="w-full h-full object-cover opacity-80" />
+                     </div>
+                   ))}
+                </div>
+                <div className="text-sm">
+                  <span className="block text-white font-bold">10,000+</span>
+                  <span className="text-slate-500">Developers joined</span>
+                </div>
+              </div>
             </div>
 
-            {/* STATS */}
-            <div className="stats stats-vertical lg:stats-horizontal bg-base-100 shadow-lg">
-              <div className="stat">
-                <div className="stat-value text-primary">10K+</div>
-                <div className="stat-title">Active Users</div>
-              </div>
-              <div className="stat">
-                <div className="stat-value text-secondary">50K+</div>
-                <div className="stat-title">Sessions</div>
-              </div>
-              <div className="stat">
-                <div className="stat-value text-accent">99.9%</div>
-                <div className="stat-title">Uptime</div>
+            <div className="relative group perspective-1000">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+              <div className="relative rounded-2xl bg-slate-900 border border-white/10 overflow-hidden shadow-2xl">
+                 <img
+                    src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=2940&auto=format&fit=crop"
+                    alt="Interface"
+                    className="w-full h-auto transform group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent pointer-events-none"></div>
               </div>
             </div>
           </div>
 
-          {/* RIGHT IMAGE */}
-          <img
-            src="/hero.png"
-            alt="CodeCollab Platform"
-            className="w-full h-auto rounded-3xl shadow-2xl border-4 border-base-100 hover:scale-105 transition-transform duration-500"
-          />
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { 
+                icon: VideoIcon, 
+                title: "HD Video Sync", 
+                desc: "Low latency 1080p video calls for a natural interview feel." 
+              },
+              { 
+                icon: Code2Icon, 
+                title: "Live Compiler", 
+                desc: "Run code in 40+ languages instantly with standard inputs." 
+              },
+              { 
+                icon: UsersIcon, 
+                title: "Pair Programming", 
+                desc: "Real-time cursor tracking and collaborative logic building." 
+              }
+            ].map((feature, idx) => (
+              <div key={idx} className="p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors group">
+                <div className="size-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-6 group-hover:bg-blue-500/20 transition-colors">
+                  <feature.icon className="size-6 text-blue-400" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-white">{feature.title}</h3>
+                <p className="text-slate-400 leading-relaxed text-sm">
+                  {feature.desc}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </main>
 
-      {/* FEATURES SECTION */}
-      <div className="max-w-7xl mx-auto px-4 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">
-            Everything You Need to <span className="text-primary font-mono">Succeed</span>
-          </h2>
-          <p className="text-lg text-base-content/70 max-w-2xl mx-auto">
-            Powerful features designed to make your coding interviews seamless and productive
+      <footer className="border-t border-white/5 bg-slate-950 py-16 px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+          
+          <div className="col-span-2 md:col-span-1 space-y-4">
+             <div className="flex items-center gap-2">
+                <div className="size-6 rounded bg-blue-600 flex items-center justify-center">
+                   <SparklesIcon className="size-3 text-white" />
+                </div>
+                <span className="font-bold text-lg">PeerPrep</span>
+             </div>
+             <p className="text-sm text-slate-500 leading-relaxed">
+               Built for developers, by developers. The best place to practice for your next big opportunity.
+             </p>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-white mb-4">Product</h4>
+            <ul className="space-y-2 text-sm text-slate-400">
+              <li><Link to="#" className="hover:text-blue-400 transition-colors">Features</Link></li>
+              <li><Link to="#" className="hover:text-blue-400 transition-colors">Pricing</Link></li>
+              <li><Link to="#" className="hover:text-blue-400 transition-colors">Integrations</Link></li>
+              <li><Link to="#" className="hover:text-blue-400 transition-colors">Changelog</Link></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 className="font-semibold text-white mb-4">Resources</h4>
+            <ul className="space-y-2 text-sm text-slate-400">
+              <li><Link to="#" className="hover:text-blue-400 transition-colors">Documentation</Link></li>
+              <li><Link to="#" className="hover:text-blue-400 transition-colors">API Reference</Link></li>
+              <li><Link to="#" className="hover:text-blue-400 transition-colors">Community</Link></li>
+              <li><Link to="#" className="hover:text-blue-400 transition-colors">Blog</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-white mb-4">Legal</h4>
+            <ul className="space-y-2 text-sm text-slate-400">
+              <li><Link to="#" className="hover:text-blue-400 transition-colors">Privacy Policy</Link></li>
+              <li><Link to="#" className="hover:text-blue-400 transition-colors">Terms of Service</Link></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-slate-600">
+            © {new Date().getFullYear()} PeerPrep Inc. All rights reserved.
           </p>
-        </div>
-
-        {/* FEATURES GRID */}
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Feature 1 */}
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body items-center text-center">
-              <div className="size-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
-                <VideoIcon className="size-8 text-primary" />
-              </div>
-              <h3 className="card-title">HD Video Call</h3>
-              <p className="text-base-content/70">
-                Crystal clear video and audio for seamless communication during interviews
-              </p>
-            </div>
-          </div>
-
-          {/* Feature 2 */}
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body items-center text-center">
-              <div className="size-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
-                <Code2Icon className="size-8 text-primary" />
-              </div>
-              <h3 className="card-title">Live Code Editor</h3>
-              <p className="text-base-content/70">
-                Collaborate in real-time with syntax highlighting and multiple language support
-              </p>
-            </div>
-          </div>
-
-          {/* Feature 3 */}
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body items-center text-center">
-              <div className="size-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
-                <UsersIcon className="size-8 text-primary" />
-              </div>
-              <h3 className="card-title">Easy Collaboration</h3>
-              <p className="text-base-content/70">
-                Share your screen, discuss solutions, and learn from each other in real-time
-              </p>
-            </div>
+          
+          <div className="flex items-center gap-4">
+             <a href="#" className="text-slate-500 hover:text-white transition-colors"><TwitterIcon className="size-5" /></a>
+             <a href="#" className="text-slate-500 hover:text-white transition-colors"><GithubIcon className="size-5" /></a>
+             <a href="#" className="text-slate-500 hover:text-white transition-colors"><LinkedinIcon className="size-5" /></a>
           </div>
         </div>
-      </div>
+      </footer>
+
     </div>
   );
 }
+
 export default HomePage;
