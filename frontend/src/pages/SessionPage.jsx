@@ -24,8 +24,9 @@ function SessionPage() {
 
   const [output, setOutput] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
-  const [selectedTestCase, setSelectedTestCase] = useState(0); // Default to first test case
-  const [testCaseResults, setTestCaseResults] = useState({}); // Store results for each test case
+  const [selectedTestCase, setSelectedTestCase] = useState(0);
+  const [testCaseResults, setTestCaseResults] = useState({});
+  const [success, setSuccess] = useState(false);
 
   // Data fetching and Mutations
   const { data: sessionData, isLoading: loadingSession, refetch } = useSessionById(id);
@@ -93,21 +94,76 @@ function SessionPage() {
     setOutput(null);
   };
 
+  const normalizeOutput = useCallback((out) => {
+    if (typeof out !== "string") return "";
+    return out.trim().replace(/\s+/g, "");
+  }, []);
+
   const handleRunCode = useCallback(async () => {
+    if (!problemData) return;
+
     setIsRunning(true);
     setOutput(null);
 
-    const result = await executeCode(selectedLanguage, code);
-    setOutput(result);
-    setIsRunning(false);
+    let completedCode = "";
 
-    // NOTE: Full test case checking logic is excluded here but can be added back if needed.
-    if (result.success) {
-      toast.success("Code executed successfully.");
+    if (selectedLanguage !== "java") {
+      completedCode =
+        code + "\n" + (problemData.testCases?.[selectedLanguage] || "");
     } else {
-      toast.error("Code execution failed!");
+      completedCode = `
+          import java.util.*;
+          class Solution {
+
+          ${code}
+
+             
+                  ${problemData.testCases?.java || ""}
+          }
+          `;
     }
-  }, [selectedLanguage, code]);
+    console.log(completedCode)
+
+    try {
+      const result = await executeCode(selectedLanguage, completedCode);
+      console.log(result)
+      setOutput(result.output);
+      setIsRunning(false);
+      setSuccess(result.success);
+
+      if (!result.success) {
+        toast.error("Execution failed");
+        return;
+      }
+
+      const expected = problemData.expectedOutput?.[selectedLanguage];
+      if (!expected) return;
+
+      const actualLines = result.output.trim().split("\n");
+      const expectedLines = expected.trim().split("\n");
+
+      const results = {};
+      let allPassed = true;
+
+      expectedLines.forEach((exp, i) => {
+        const pass =
+          normalizeOutput(actualLines[i]) === normalizeOutput(exp);
+        results[i] = { passed: pass, actualOutput: actualLines[i] || "", expectedOutput: exp };
+        if (!pass) allPassed = false;
+      });
+
+      setTestCaseResults(results);
+
+      if (allPassed) {
+        toast.success("All test cases passed!");
+      } else {
+        toast.error("Some test cases failed");
+      }
+    } catch (err) {
+      toast.error("Runtime error");
+      setIsRunning(false);
+    }
+  }, [selectedLanguage, code, problemData]);
 
   const handleEndSession = useCallback(() => {
     if (confirm("Are you sure you want to end this session? All participants will be notified.")) {
@@ -312,12 +368,16 @@ function SessionPage() {
 
               {/* Bottom Panel - Output Panel */}
               <Panel defaultSize={30} minSize={15}>
-                <OutputPanel 
-                  output={output} 
+                <OutputPanel
+                  success={success}
+                  output={output}
                   testCases={problemData?.examples}
                   selectedTestCase={selectedTestCase}
                   onSelectTestCase={setSelectedTestCase}
                   testCaseResults={testCaseResults}
+                  expectedOutput={
+                    problemData?.expectedOutput?.[selectedLanguage]
+                  }
                 />
               </Panel>
             </PanelGroup>

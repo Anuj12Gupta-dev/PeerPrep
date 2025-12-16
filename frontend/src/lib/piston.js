@@ -14,6 +14,7 @@ const LANGUAGE_VERSIONS = {
  * @returns {Promise<{success:boolean, output?:string, error?: string}>}
  */
 export async function executeCode(language, code) {
+  console.log(code)
   try {
     const languageConfig = LANGUAGE_VERSIONS[language];
 
