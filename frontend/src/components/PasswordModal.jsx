@@ -130,7 +130,7 @@ function PasswordModal({ isOpen, onClose, onSubmit, isCreating }) {
           </div>
 
           {/* Modal Actions */}
-          <div className="flex justify-end gap-3 p-4 border-t border-white/5">
+          <div className="flex flex-col sm:flex-row justify-end gap-3 p-4 border-t border-white/5">
             <button 
               type="button"
               className="h-10 px-5 rounded-full text-slate-400 hover:bg-white/5 transition-colors" 
@@ -141,7 +141,7 @@ function PasswordModal({ isOpen, onClose, onSubmit, isCreating }) {
 
             <button
               type="submit"
-              className="h-10 px-6 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="h-10 px-6 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isCreating}
             >
               Set Password

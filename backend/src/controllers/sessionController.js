@@ -45,9 +45,25 @@ export async function createSession(req, res) {
   }
 }
 
-export async function getActiveSessions(_, res) {
+export async function getActiveSessions(req, res) {
   try {
-    const sessions = await Session.find({ status: "active" })
+    const userId = req.user._id;
+    
+    // Find sessions where:
+    // 1. Status is active
+    // 2. Either:
+    //    a. Session is public (no password)
+    //    b. User is the host
+    //    c. User is the participant
+    const sessions = await Session.find({
+      status: "active",
+      $or: [
+        { password: null },
+        { password: { $exists: false } },
+        { host: userId },
+        { participant: userId }
+      ]
+    })
       .populate("host", "name profileImage email clerkId")
       .populate("participant", "name profileImage email clerkId")
       .sort({ createdAt: -1 })
@@ -96,6 +112,7 @@ export async function getSessionById(req, res) {
 export async function joinSession(req, res) {
   try {
     const { id } = req.params;
+    const { password } = req.body; // Password is optional in request body
     const userId = req.user._id;
     const clerkId = req.user.clerkId;
 
@@ -113,6 +130,11 @@ export async function joinSession(req, res) {
 
     // check if session is already full - has a participant
     if (session.participant) return res.status(409).json({ message: "Session is full" });
+
+    // Check password if session is password protected
+    if (session.password && session.password !== password) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
 
     session.participant = userId;
     await session.save();

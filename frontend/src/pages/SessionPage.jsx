@@ -5,10 +5,11 @@ import { useEndSession, useJoinSession, useSessionById } from "../hooks/useSessi
 import { PROBLEMS } from "../data/problems";
 import { executeCode } from "../lib/piston";
 import Navbar from "../components/Navbar";
+import PasswordPromptModal from "../components/PasswordPromptModal";
 
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { getDifficultyBadgeClass } from "../lib/utils";
-import { Loader2Icon, LogOutIcon, ShareIcon } from "lucide-react";
+import { Loader2Icon, LogOutIcon, ShareIcon, LockIcon } from "lucide-react";
 import CodeEditorPanel from "../components/CodeEditorPanel";
 import OutputPanel from "../components/OutputPanel";
 
@@ -29,6 +30,7 @@ function SessionPage() {
   const [selectedTestCase, setSelectedTestCase] = useState(0);
   const [testCaseResults, setTestCaseResults] = useState({});
   const [success, setSuccess] = useState(false);
+  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
 
   // Data fetching and Mutations
   const { data: sessionData, isLoading: loadingSession, refetch } = useSessionById(id);
@@ -73,7 +75,12 @@ function SessionPage() {
     if (session.status !== "active") return;
 
     if (!isHost && !isParticipant) {
-      joinSessionMutation.mutate(id, { onSuccess: refetch });
+      // If session is password protected, show password prompt
+      if (session.password) {
+        setShowPasswordPrompt(true);
+      } else {
+        joinSessionMutation.mutate({ id, password: null }, { onSuccess: refetch });
+      }
     }
   }, [session, user, loadingSession, isHost, isParticipant, id, joinSessionMutation, refetch]);
 
@@ -195,11 +202,27 @@ function SessionPage() {
       .catch(() => toast.error("Failed to copy link to clipboard"));
   };
 
+  const handlePasswordSubmit = (password) => {
+    joinSessionMutation.mutate({ id, password }, { 
+      onSuccess: () => {
+        setShowPasswordPrompt(false);
+        refetch();
+      },
+      onError: (error) => {
+        // Keep the modal open and show error in the modal itself
+        console.error("Failed to join session:", error);
+      }
+    });
+  };
+
   if (loadingSession || joinSessionMutation.isPending) {
     return (
-      <div className="h-screen flex items-center justify-center bg-slate-950">
-        <Loader2Icon className="size-10 animate-spin text-blue-500" />
-        <p className="ml-3 text-lg text-slate-300">Loading Session...</p>
+      <div className="h-screen flex flex-col bg-slate-950">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center">
+          <Loader2Icon className="size-10 animate-spin text-blue-500" />
+          <p className="ml-3 text-lg text-slate-300">Loading Session...</p>
+        </div>
       </div>
     );
   }
@@ -225,6 +248,18 @@ function SessionPage() {
     // Outer container: full screen height, flex column
     <div className="h-screen flex flex-col bg-slate-950 text-white"> 
       <Navbar />
+      
+      {/* Password Prompt Modal */}
+      <PasswordPromptModal
+        isOpen={showPasswordPrompt}
+        onClose={() => {
+          // If user cancels, redirect to dashboard
+          navigate("/dashboard");
+        }}
+        onSubmit={handlePasswordSubmit}
+        isJoining={joinSessionMutation.isPending}
+        sessionTitle={session?.problem}
+      />
     
       {/* Main Content Area: Offset for fixed navbar */}
       <div className="flex-1 pt-16"> 

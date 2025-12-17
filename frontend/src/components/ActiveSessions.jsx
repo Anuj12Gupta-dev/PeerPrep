@@ -5,6 +5,8 @@ import {
   UsersIcon,
   ZapIcon,
   LoaderIcon,
+  LockIcon,
+  GlobeIcon,
 } from "lucide-react";
 import { Link } from "react-router";
 import { getDifficultyBadgeClass } from "../lib/utils";
@@ -80,12 +82,27 @@ function ActiveSessions({ sessions, isLoading, isUserInSession }) {
                         <span className="text-xs">{session.participant ? "2/2" : "1/2"}</span>
                       </div>
                       
-                      {/* Status Badge */}
-                      {session.participant && !isUserInSession(session) ? (
-                        <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-600/20 text-red-400">FULL</span>
-                      ) : (
-                        <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-600/20 text-green-400">OPEN</span>
-                      )}
+                      {/* Status Badges */}
+                      <div className="flex items-center gap-2">
+                        {session.participant && !isUserInSession(session) ? (
+                          <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-600/20 text-red-400">FULL</span>
+                        ) : (
+                          <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-600/20 text-green-400">OPEN</span>
+                        )}
+                        
+                        {/* Public/Private Badge */}
+                        {session.password ? (
+                          <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-amber-600/20 text-amber-400 flex items-center gap-1">
+                            <LockIcon className="size-3" />
+                            Protected
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-600/20 text-blue-400 flex items-center gap-1">
+                            <GlobeIcon className="size-3" />
+                            Public
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
