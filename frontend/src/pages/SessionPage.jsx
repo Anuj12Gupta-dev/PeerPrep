@@ -16,11 +16,13 @@ import useStreamClient from "../hooks/useStreamClient";
 import { StreamCall, StreamVideo } from "@stream-io/video-react-sdk";
 import VideoCallUI from "../components/VideoCallUI";
 import toast from "react-hot-toast";
+import { useIsMdUp } from "../hooks/useIsMdUp";
 
 function SessionPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useUser();
+  const isMdUp = useIsMdUp();
 
   const [output, setOutput] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
@@ -56,6 +58,14 @@ function SessionPage() {
   const [code, setCode] = useState(problemData?.starterCode?.javascript || "");
 
   // --- Effects ---
+   useEffect(() => {
+    if (!isMdUp) {
+      toast(
+        "For better experience, please use a larger screen size.",
+        { id: "screen-warning" }
+      );
+    }
+  }, [isMdUp]);
 
   // Auto-join participant when session data loads
   useEffect(() => {
@@ -218,7 +228,7 @@ function SessionPage() {
     
       {/* Main Content Area: Offset for fixed navbar */}
       <div className="flex-1 pt-16"> 
-        <PanelGroup direction="horizontal">
+         <PanelGroup direction={isMdUp ? "horizontal" : "vertical"}>
 
           {/* LEFT PANEL: Problem Description & Info */}
           <Panel defaultSize={50} minSize={30}>
